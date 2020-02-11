@@ -52,8 +52,8 @@ export default {
     return {
       loginForm: {
         // mobile和code的设置来自接口文档
-        mobile: '13911111111',
-        code: '246810'
+        mobile: '',
+        code: ''
       }
     }
   },
