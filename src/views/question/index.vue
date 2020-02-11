@@ -1,5 +1,6 @@
 <template>
-  <div class='container'>
+  <!-- title属性 第一个属性的样子，row显示几小行-->
+  <div>
     <van-skeleton title :row="3" />
     <van-skeleton title :row="3" />
     <van-skeleton title :row="3" />
@@ -13,7 +14,7 @@ export default {
 </script>
 
 <style scoped lang='less'>
-.van-skeleton{
+.van-skeleton {
   margin-top: 10px;
 }
 </style>
