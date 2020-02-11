@@ -28,27 +28,34 @@
 </template>
 
 <script>
+// 导入api方法
 import { apiUserLogin } from '@/api/user'
+// 导入vuex的方法
 import { mapMutations } from 'vuex'
 export default {
   name: 'user-login',
   data () {
     return {
       loginForm: {
-        mobile: '13911111111',
-        code: '246810'
+        mobile: '13911111111', // 手机号码
+        code: '246810'// 验证码
       }
     }
   },
   methods: {
+    // vuex的方法
     ...mapMutations(['updateUser']),
     async login () {
       try {
         const result = await apiUserLogin(this.loginForm)
+        // 服务器端会返回token信息，我们要保存token信息
         this.updateUser(result)
+        // 页面提示效果
         this.$toast.success('登录成功')
+        // 路由重定向
         this.$router.push('/')
       } catch (err) {
+        // 错误提示信息
         return this.$toast.fail('账号不正确')
       }
     }

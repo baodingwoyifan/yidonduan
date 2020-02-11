@@ -11,17 +11,17 @@ export default new Vuex.Store({
     user: auth.getUser()
   },
   mutations: {
-    updateUser (state, user) {
+    updateUser (state, data) {
       // 更新vuex中用户token等信息
-      state.user = user
+      state.user = data
       // 更新localStorage的用户token等信息
-      auth.setUser(user)
+      auth.setUser(data)
     },
-    clearUser (state, user) {
+    clearUser (state, data) {
       // 删除vuex中用户token等信息
       state.user = {}
       // 清除localStorage的用户token等信息
-      auth.setUser(user)
+      auth.setUser(data)
     }
   },
   actions: {
