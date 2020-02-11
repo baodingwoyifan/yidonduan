@@ -1,77 +1,78 @@
 import axios from 'axios'
 import JSONBig from 'json-bigint'
-// 引入vuex，用于判断用户是否登录系统
-import store from '@/store'
-// 导入路由
-import router from '@/router/index.js'
-// 创建一个新的axios实例 和原来的axios没有关系
-// 给instance配置公共请求跟地址、请求、响应拦截器、401处理、大整形数字处理
-// 所有的配置都是给instance配置的
-// 为什么不直接对axios配置？
-// 在别的地方可能还要使用原生axios的
-// instance的出现，可以保证axios是纯净的
+import store from '@/store' // 引入vuex中的store实例
+import router from '@/router'
+// 创建一个axios实例 和原来的axios没有关系
 const instance = axios.create({
-  // 请求根地址
-  baseURL: 'http://ttapi.research.itcast.cn/',
-  // 配置数据转换器
+  // 构造参数
+  baseURL: 'http://ttapi.research.itcast.cn/', // 设置请求地址常量
   transformResponse: [function (data) {
-    // Do whatever you want to transform the data
-    // if (data) {
-    //   return JSONBig.parse(data) // 只针对大整型数据进行处理，其他的不处理
-    // } else {
-    //   return data
-    // };
-    // 下面代码是对上面的if的升级处理
+    //   data就是后端响应的字符串 默认的转化是 JSON.parse 处理大数字是有问题的额 需要用JSONBIG替换
+    // return data ? JSONBig.parse(data) : {}
     try {
       return JSONBig.parse(data)
-    } catch (err) {
+    } catch (error) {
       return data
     }
-  }],
-  timeout: 1000,
-  headers: { 'X-Custom-Header': 'foobar' }
+  }]
 })
-// 配置请求拦截器
 instance.interceptors.request.use(function (config) {
-  // 发送请求的相关逻辑
-  // config:对象  与 axios.defaults 相当
-  // 借助config配置token
-  // 判断token存在再做配置
+  // config就是请求的参数
   if (store.state.user.token) {
-    // 注意：token前边有 'Bearer ' 的信息前缀
-    config.headers.Authorization = 'Bearer ' + store.state.quser.token
+    //   统一注入token
+    config.headers.Authorization = 'Bearer ' + store.state.user.token
   }
   return config
 }, function (error) {
-  // Do something with request error
+  // 返回失败
   return Promise.reject(error)
 })
-// 配置响应拦截器
-instance.interceptors.response.use(function (response) {
-  // 正常响应处理的
-  // 升級處理
-  // 有时返回的是data，有时是data.data
-  // 过滤data
+// 响应拦截器
+// 响应拦截器 （响应成功：剥离无效数据，响应失败：刷新token）
+instance.interceptors.response.use(res => {
+  // 将来获取数据：res.data.data 麻烦
+  // 我们想要结果：data 即可
   try {
-    return response.data.data
-  } catch (err) {
-    return response.data
+    return res.data.data
+  } catch (e) {
+    return res.data
   }
-}, function (error) {
-  // 非正常响应处理(包括401)
-  // console.dir(error) // 对象： config request response isAxiosError toJSON
-  if (error.response.status === 401) {
-    // token不ok(token在服务器端已经失效了，2个小时时效)
-    // 强制用户重新登录系统，以刷新服务器端的token时效
+}, async err => {
+  try {
+    // 目的：刷新token
+    if (err.response && err.response.status === 401) {
+      // 未登录  跳转登录页面  阻止程序运行
+      const { user } = store.state
+      // 如果没有token没登录  如果没有refresh_token无法刷新token
+      if (!user.token || !user.refresh_token) {
+        router.push('/login')
+        return Promise.reject(err)
+      }
+      // 刷新token 发请求  没有配置的axios  自己配置refresh_token
+      const res = await axios({
+        url: 'http://ttapi.research.itcast.cn/app/v1_0/authorizations',
+        method: 'put',
+        headers: {
+          Authorization: `Bearer ${user.refresh_token}`
+        }
+      })
+      // token获取  res.data.data.token
+      // 更新 vuex 和 本地 token
+      store.commit('setUser', {
+        token: res.data.data.token,
+        refresh_token: user.refresh_token
+      })
+      // 继续发送刚才错误的请求
+      // instance({之前错误的请求配置})
+      // err错误对象 包含（response 响应对象 |config 请求配置）
+      return instance(err.config)
+    }
+  } catch (e) { // exception 异常
+    // 刷新token失败
     router.push('/login')
-    // 不要给做错误提示了
-    return new Promise(function () { }) // 空的Promise对象，没有机会执行catch，进而不做错误提示了
+    return Promise.reject(e)
   }
-  // return new Promise((resolve,reject)=>{
-  // reject('获得文章失败！')
-  // })
-  return Promise.reject(error)
+  return Promise.reject(err)
 })
 
-// 导出动作
 export default instance
