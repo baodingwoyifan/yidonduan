@@ -10,6 +10,8 @@ import 'vant/lib/index.css'
 import './assets/css/global.less'
 // rem基准值
 import 'amfe-flexible/index.min.js'
+// 对validate校验规则导入
+import '@/utils/validate.js'
 // 注册vant
 Vue.use(Vant)
 Vue.config.productionTip = false
