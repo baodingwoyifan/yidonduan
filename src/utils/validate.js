@@ -1,4 +1,4 @@
-// 1. 导入localize模块函数
+// 1. 导入localize语言模块函数
 import { extend, localize } from 'vee-validate'
 // 导入全部的规则
 import * as rules from 'vee-validate/dist/rules'

@@ -5,10 +5,12 @@ import router from '@/router'
 // 创建一个axios实例 和原来的axios没有关系
 const instance = axios.create({
   // 构造参数
-  baseURL: 'http://ttapi.research.itcast.cn/', // 设置请求地址常量
+  //【配置情求跟地址
+  baseURL: 'http://ttapi.research.itcast.cn/', 
   transformResponse: [function (data) {
     //   data就是后端响应的字符串 默认的转化是 JSON.parse 处理大数字是有问题的额 需要用JSONBIG替换
     // return data ? JSONBig.parse(data) : {}
+    //数据转换器
     try {
       return JSONBig.parse(data)
     } catch (error) {
@@ -27,7 +29,7 @@ instance.interceptors.request.use(function (config) {
   // 返回失败
   return Promise.reject(error)
 })
-// 响应拦截器
+
 // 响应拦截器 （响应成功：剥离无效数据，响应失败：刷新token）
 instance.interceptors.response.use(res => {
   // 将来获取数据：res.data.data 麻烦
@@ -40,6 +42,7 @@ instance.interceptors.response.use(res => {
 }, async err => {
   try {
     // 目的：刷新token
+    //401处理
     if (err.response && err.response.status === 401) {
       // 未登录  跳转登录页面  阻止程序运行
       const { user } = store.state
