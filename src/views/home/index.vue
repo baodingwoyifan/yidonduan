@@ -2,50 +2,31 @@
   <div class="container">
     <van-tabs v-model="activeChannelIndex">
       <van-tab title="推荐">
-         <!-- 文章列表展示区域 -->
-  <div class="scroll-wrapper">
-    <!-- 文章上拉列表 -->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" 
-              @load="onLoad">
-      <van-cell v-for="item in list" :key="item" :title="item"/>
-    </van-list>
-  </div>
+        <com-article></com-article>
       </van-tab>
-      <van-tab title="数据库">数据库内容展示</van-tab>
-      <van-tab title="后端">后端内容展示</van-tab>
+      <van-tab title="数据库">
+        <com-article></com-article>
+      </van-tab>
+      <van-tab title="后端">
+        <com-article></com-article>
+      </van-tab>
     </van-tabs>
   </div>
 </template>
 
 <script>
+import ComArticle from "./components/com-article";
 export default {
-  name: 'home-index',
-  data () {
+  name: "home-index",
+  data() {
     return {
-      list: [],
-      loading: false,
-      finished: false,
-      activeChannelIndex: 0
-    }
+      activeChannelIndex: 0 //激活频道的下标
+    };
   },
-  methods: {
-    onLoad () {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        // 加载状态结束
-        this.loading = false
-
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true
-        }
-      }, 500)
-    }
+  components: {
+    ComArticle
   }
-}
+};
 </script>
 <style scoped lang='less'>
 .van-tabs {
@@ -64,10 +45,10 @@ export default {
     // 给上拉列表设置样式
     .scroll-wrapper {
       height: 100%;
-      overflow-y: auto;
+      overflow-y: auto; //内容过多的话，会出现滚动条
     }
   }
-  // 给频道下边沿横向设置样式
+  // 给频道下边沿横向设置样式 颜色
   /deep/ .van-tabs__line {
     background-color: #1989fa;
   }
