@@ -43,12 +43,25 @@ export default {
       articleList: []
     };
   },
-  created() {
-    this.getArticleList();
-  },
+  // created() {
+  //   this.getArticleList();
+  // },
   methods: {
-    onLoad() {
+   async onLoad() {
       // 异步更新数据
+      // 获取文章数据
+      let articles = await this.getArticleList();
+      if (articles.results.length > 0) {
+        // 把获得到的文章数据push追加给articleList成员
+        this.articleList.push(...articles.results);
+        // 更新时间戳
+        this.ts = articles.pre_timestamp;
+      } else {
+        //停止动画效果
+        this.loading = false;
+      }
+      //停止瀑布效果
+      this.finished = true;
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
           this.list.push(this.list.length + 1);
@@ -74,8 +87,9 @@ export default {
         channel_id: this.channelID,
         timestamp: this.ts
       });
-      console.log(result);
-      this.articleList = result.results;
+      // this.articleList = result.results;
+      // 把获得好的文章列表返回,给onLoad使用
+      return result;
     }
   }
 };
