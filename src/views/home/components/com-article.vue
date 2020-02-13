@@ -1,7 +1,9 @@
 <template>
   <!-- 文章列表展示区域 -->
   <div class="scroll-wrapper">
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+     <!-- v-model="isLoading" 设置下拉动画效果是否结束的 -->
+     <!-- @refresh="onRefresh 鼠标左键下拉动作触发的事件-->
+    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text='ε＝ε＝ε＝(#>д<)ﾉ累死我了'>
       <!-- 文章上拉列表 -->
       <!-- v-model="loading" 设置加载动画效果的 -->
       <!-- :finished="finished" 是否停止加载  false继续加载，true时停止加载-->
@@ -22,7 +24,7 @@ export default {
   data() {
     return {
       // 下拉刷新
-      isLoading: false,
+      isLoading: false,//下拉动画是否显示的开关
       list: [], //接受加载好的数据的
       loading: false, //设置加载中。。。动画是否显示，默认不显示（加载的时候设置为true，加载完毕为false）
       finished: false //是否停止的标志，如果后端没有数据显示了，就设置为真，
@@ -46,8 +48,8 @@ export default {
     // 下拉刷新
     onRefresh() {
       setTimeout(() => {
-        this.$toast.success ("文章刷新成功");
-        this.isLoading = false; // 暂停拉取
+        this.$toast.success ("虽然很累。但是还是帮你刷新下了哦 (*╹▽╹*)");
+        this.isLoading = false; // 下拉动画消失
         this.onLoad(); // 获取数据一次
       }, 1000);
     }
