@@ -12,7 +12,24 @@
       <!-- van-cell单元格组件，内容独占一格显示 -->
       <!-- title设置当前单元格的标题的 -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" />
+        <!-- <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" /> -->
+        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+          <template slot="label">
+            <van-grid :border="false" v-if="item.cover.type>0" :column-num="item.cover.type">
+              <van-grid-item v-for="(item2,k2) in item.cover.images" :key="k2">
+                <van-image width="90" height="90" :src="item2" />
+              </van-grid-item>
+            </van-grid>
+            <p>
+              <span>作者:{{item.aut_name}}</span>
+              &nbsp;
+              <span>评论 :{{item.comm_count}}</span>
+              &nbsp;
+              <span>时间:{{item.pubdate}}</span>
+              &nbsp;
+            </p>
+          </template>
+        </van-cell>
       </van-list>
     </van-pull-refresh>
   </div>
@@ -47,10 +64,13 @@ export default {
   //   this.getArticleList();
   // },
   methods: {
-   async onLoad() {
+    async onLoad() {
       // 异步更新数据
+      // 应用延迟器,设置await，使异步变为同步
+      await this.$sleep(800);
       // 获取文章数据
-      let articles = await this.getArticleList();
+      const articles = await this.getArticleList();
+      // 判断数据是否获取到
       if (articles.results.length > 0) {
         // 把获得到的文章数据push追加给articleList成员
         this.articleList.push(...articles.results);
@@ -58,10 +78,11 @@ export default {
         this.ts = articles.pre_timestamp;
       } else {
         //停止动画效果
-        this.loading = false;
+
+        this.finished = false;
       }
       //停止瀑布效果
-      this.finished = true;
+      this.loading = true;
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
           this.list.push(this.list.length + 1);
@@ -79,13 +100,13 @@ export default {
       setTimeout(() => {
         this.$toast.success("虽然很累。但是还是帮你刷新下了哦 (*╹▽╹*)");
         this.isLoading = false; // 下拉动画消失
-        this.onLoad(); // 获取数据一次
+        this.onLoad(); // 触发请求上拉动作
       }, 1000);
     },
     async getArticleList() {
       const result = await apiArticleList({
-        channel_id: this.channelID,
-        timestamp: this.ts
+        channel_id: this.channelID, //频道id
+        timestamp: this.ts //时间戳
       });
       // this.articleList = result.results;
       // 把获得好的文章列表返回,给onLoad使用

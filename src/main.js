@@ -2,6 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+// 过滤器
+import * as filters from '@/utils/filters'
+// 导入懒加载模块
+import { Lazyload } from 'vant'
 // 导入vant
 import Vant from 'vant'
 // 导入vantcss样式
@@ -14,7 +18,29 @@ import 'amfe-flexible/index.min.js'
 import '@/utils/validate.js'
 // 注册vant
 Vue.use(Vant)
+Vue.use(Lazyload) // 注册懒加载指令
+// 创建延迟器，名称为sleep，也可以自定义为其他名字
+// Vue.prototype.$sleep = time => {
+//   // 返回的是一个promise对象，可以使用async和await是异步变为同步
+//   return new Promise((resolve) => {
+//     window.setTimeout(() => {
+//       // 规定在多久之后做一点事情，可以设置当前延迟器的等待时间
+//       resolve()
+//     }, time)
+//   })
+// }
+Vue.prototype.$sleep = time => {
+  return new Promise((resolve) => {
+    window.setTimeout(() => {
+      resolve()
+    }, time)
+  })
+}
 Vue.config.productionTip = false
+// 注册全局过滤器
+Object.keys(filters).forEach(item => {
+  Vue.filter(item, filters[item])
+})
 
 new Vue({
   router,
