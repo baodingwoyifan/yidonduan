@@ -4,10 +4,8 @@ import router from './router'
 import store from './store'
 // 过滤器
 import * as filters from '@/utils/filters'
-// 导入懒加载模块
-import { Lazyload } from 'vant'
-// 导入vant
-import Vant from 'vant'
+// 导入vant和懒加载模块
+import Vant, { Lazyload }  from 'vant'
 // 导入vantcss样式
 import 'vant/lib/index.css'
 // 导入自己的全局css样式，注意在vant的css样式后面引入
@@ -18,7 +16,8 @@ import 'amfe-flexible/index.min.js'
 import '@/utils/validate.js'
 // 注册vant
 Vue.use(Vant)
-Vue.use(Lazyload) // 注册懒加载指令
+// 注册懒加载指令
+Vue.use(Lazyload)
 // 创建延迟器，名称为sleep，也可以自定义为其他名字
 // Vue.prototype.$sleep = time => {
 //   // 返回的是一个promise对象，可以使用async和await是异步变为同步

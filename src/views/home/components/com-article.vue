@@ -13,11 +13,25 @@
       <!-- title设置当前单元格的标题的 -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" /> -->
+        <!-- cell单元格组件 -->
         <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+          <!-- 通过作用域插槽，体现label的描述信息 -->
           <template slot="label">
+            <!-- van-grid宫格组件一行中,通过列的方式设置单元格 -->
+            <!-- border设置边框 -->
+            <!-- :column-num=设置宫格列的个数 -->
+             <!-- v-if="item.cover.type>0" 表示如果有数据的话，下面的组件才会显示 -->
             <van-grid :border="false" v-if="item.cover.type>0" :column-num="item.cover.type">
+              <!-- van-grid-item宫格单元 
+             内容区域:设置具体内容的
+              -->
+              <!-- cover.images进行图片信息展示 -->
+              <!-- 这里的item2是为了区别上面的item -->
               <van-grid-item v-for="(item2,k2) in item.cover.images" :key="k2">
-                <van-image width="90" height="90" :src="item2" />
+                <!-- van-image 
+                可以设置宽 高，src图片路径名地址
+                -->
+                <van-image width="90" height="90" :src="item2" lazy-load />
               </van-grid-item>
             </van-grid>
             <p>
