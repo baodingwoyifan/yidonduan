@@ -5,7 +5,7 @@ import store from './store'
 // 过滤器
 import * as filters from '@/utils/filters'
 // 导入vant和懒加载模块
-import Vant, { Lazyload }  from 'vant'
+import Vant, { Lazyload } from 'vant'
 // 导入vantcss样式
 import 'vant/lib/index.css'
 // 导入自己的全局css样式，注意在vant的css样式后面引入
@@ -35,11 +35,12 @@ Vue.prototype.$sleep = time => {
     }, time)
   })
 }
-Vue.config.productionTip = false
 // 注册全局过滤器
 Object.keys(filters).forEach(item => {
   Vue.filter(item, filters[item])
 })
+Vue.config.productionTip = false
+
 
 new Vue({
   router,

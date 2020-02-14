@@ -20,7 +20,7 @@
             <!-- van-grid宫格组件一行中,通过列的方式设置单元格 -->
             <!-- border设置边框 -->
             <!-- :column-num=设置宫格列的个数 -->
-             <!-- v-if="item.cover.type>0" 表示如果有数据的话，下面的组件才会显示 -->
+            <!-- v-if="item.cover.type>0" 表示如果有数据的话，下面的组件才会显示 -->
             <van-grid :border="false" v-if="item.cover.type>0" :column-num="item.cover.type">
               <!-- van-grid-item宫格单元 
              内容区域:设置具体内容的
@@ -35,23 +35,30 @@
               </van-grid-item>
             </van-grid>
             <p>
+              <!-- </van-icon>图标组件  name来设置显示图标的样式 -->
+              <van-icon name="close" style="float:right;" @click="displayDialog()" />
               <span>作者:{{item.aut_name}}</span>
               &nbsp;
               <span>评论 :{{item.comm_count}}</span>
               &nbsp;
-              <span>时间:{{item.pubdate}}</span>
+              <span>时间:{{item.pubdate | formatTime}}</span>
               &nbsp;
             </p>
           </template>
         </van-cell>
       </van-list>
     </van-pull-refresh>
+    <!--关闭-更多动作弹出框-->
+    <!-- 组件传值的方法，用v-model控制组件的显示与隐藏 -->
+    <more-action v-model="showDialog"></more-action>
   </div>
 </template>
 
 <script>
 //导入获得文章的api函数
 import { apiArticleList } from "@/api/article";
+//导入弹出框组件模块
+import MoreAction from "./com-moreaction";
 export default {
   name: "com-article",
   // 接收传递过来的id值
@@ -71,8 +78,13 @@ export default {
       // 声明一个时间戳成员，用于获取文章使用
       ts: Date.now(),
       // 当前频道文章列表信息
-      articleList: []
+      articleList: [],
+      showDialog: false // 弹出框的显示与隐藏
     };
+  },
+  components: {
+    // 注册弹出框组件
+    MoreAction
   },
   // created() {
   //   this.getArticleList();
@@ -92,7 +104,6 @@ export default {
         this.ts = articles.pre_timestamp;
       } else {
         //停止动画效果
-
         this.finished = false;
       }
       //停止瀑布效果
@@ -125,6 +136,11 @@ export default {
       // this.articleList = result.results;
       // 把获得好的文章列表返回,给onLoad使用
       return result;
+    },
+    // 展示对话框
+    displayDialog() {
+      // 点击之后使弹出框显示
+      this.showDialog = true;
     }
   }
 };
