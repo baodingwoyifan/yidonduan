@@ -36,7 +36,12 @@
             </van-grid>
             <p>
               <!-- </van-icon>图标组件  name来设置显示图标的样式 -->
-              <van-icon name="close" style="float:right;" @click="displayDialog()" />
+              <!-- @click="displayDialog(item.art_id.toString())"传递不感兴趣的文章id -->
+              <van-icon
+                name="close"
+                style="float:right;"
+                @click="displayDialog(item.art_id.toString())"
+              />
               <span>作者:{{item.aut_name}}</span>
               &nbsp;
               <span>评论 :{{item.comm_count}}</span>
@@ -50,7 +55,11 @@
     </van-pull-refresh>
     <!--关闭-更多动作弹出框-->
     <!-- 组件传值的方法，用v-model控制组件的显示与隐藏 -->
-    <more-action v-model="showDialog"></more-action>
+    <more-action
+      v-model="showDialog"
+      :articleID="nowArticleID"
+      @dislikeSuccess="handleDislikeSuccess"
+    ></more-action>
   </div>
 </template>
 
@@ -79,7 +88,8 @@ export default {
       ts: Date.now(),
       // 当前频道文章列表信息
       articleList: [],
-      showDialog: false // 弹出框的显示与隐藏
+      showDialog: false, // 弹出框的显示与隐藏
+      nowArticleID: "" // 不感兴趣文章id
     };
   },
   components: {
@@ -141,6 +151,24 @@ export default {
     displayDialog() {
       // 点击之后使弹出框显示
       this.showDialog = true;
+    },
+    /**
+     * 显示更多操作对话框
+     * artID: 不喜欢文章id
+     */
+    displayDialog(artID) {
+      this.showDialog = true;
+      // 目标文章id
+      this.nowArticleID = artID;
+    },
+    //不感兴趣文章的后续成功处理
+    handleDislikeSuccess() {
+      // 获取当前被处理文章在数组中下标
+      let index = this.articleList.findIndex(
+        item => item.art_id.toString() === this.nowArticleID
+      );
+      // 在总的文章中把当前文章清除掉
+      this.articleList.splice(index, 1);
     }
   }
 };

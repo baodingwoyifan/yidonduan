@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <!-- 频道展示区域 -->
-    <van-tabs v-model="activeChannelIndex">
-      <!--对频道做遍历展示-->
-      <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
-      <!-- 把频道id传递给子组件 -->
-        <com-article :channelID='item.id'></com-article>
-      </van-tab>
-    </van-tabs>
+      <!-- 频道展示区域 -->
+      <van-tabs v-model="activeChannelIndex">
+        <!--对频道做遍历展示-->
+        <van-tab :title="item.name" v-for="item in channelList" :key="item.id">
+          <!-- 把频道id传递给子组件 -->
+          <com-article :channelID="item.id"></com-article>
+        </van-tab>
+      </van-tabs>
   </div>
 </template>
 
@@ -20,20 +20,23 @@ export default {
   data() {
     return {
       channelList: [], //接收频道列表
-      activeChannelIndex: 0 //激活频道的下标
+      activeChannelIndex: 0, //激活频道的下标
+      downSuccessText: "", // 下拉加载完毕提示信息
+      isLoading: false //下拉动画是否显示的开关
     };
   },
   components: {
     ComArticle
   },
   created() {
-    this.getChannelList()
+    this.getChannelList();
   },
   methods: {
     async getChannelList() {
-      const result = await apiChannelList()
-      this.channelList=result.channels
-    }
+      const result = await apiChannelList();
+      this.channelList = result.channels;
+    },
+ 
   }
 };
 </script>
