@@ -3,7 +3,12 @@
   <div class="scroll-wrapper">
     <!-- v-model="isLoading" 设置下拉动画效果是否结束的 -->
     <!-- @refresh="onRefresh 鼠标左键下拉动作触发的事件-->
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="ε＝ε＝ε＝(#>д<)ﾉ累死我了">
+    <van-pull-refresh
+      v-model="isLoading"
+      @refresh="onRefresh"
+      :success-text="downSuccessText"
+      success-duration="1000"
+    >
       <!-- 文章上拉列表 -->
       <!-- v-model="loading" 设置加载动画效果的 -->
       <!-- :finished="finished" 是否停止加载  false继续加载，true时停止加载-->
@@ -90,7 +95,8 @@ export default {
       // 当前频道文章列表信息
       articleList: [],
       showDialog: false, // 弹出框的显示与隐藏
-      nowArticleID: "" // 不感兴趣文章id
+      nowArticleID: "", // 不感兴趣文章id
+      downSuccessText: "" //更新信息提示信息
     };
   },
   components: {
@@ -131,13 +137,23 @@ export default {
         }
       }, 500);
     },
-    // 下拉刷新
-    onRefresh() {
-      setTimeout(() => {
-        this.$toast.success("虽然很累。但是还是帮你刷新下了哦 (*╹▽╹*)");
-        this.isLoading = false; // 下拉动画消失
-        this.onLoad(); // 触发请求上拉动作
-      }, 1000);
+    // 下拉刷新载入
+    async onRefresh() {
+      await this.$sleep(1000); // 暂停1s
+
+      // 获取文章信息
+      let articles = await this.getArticleList();
+
+      if (articles.results.length) {
+        // 把文章追加给articleList
+        this.articleList.unshift(...articles.results);
+        this.downSuccessText = "加载最新文章成功";
+        // 更新时间戳
+        this.ts = articles.pre_timestamp;
+      } else {
+        this.downSuccessText = "已经是最新文章";
+      }
+      this.isLoading = false; // 暂停拉取
     },
     async getArticleList() {
       const result = await apiArticleList({
