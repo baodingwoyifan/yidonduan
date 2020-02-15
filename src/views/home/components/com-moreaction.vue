@@ -9,6 +9,7 @@
     :show-confirm-button="false"
     @input="$emit('input',$event)"
     close-on-click-overlay
+    @close='isOneLevel=true'
   >
     <van-cell-group v-if="isOneLevel">
       <!-- icon设置图标 -->
@@ -23,6 +24,7 @@
     <van-cell-group v-else>
       <!-- icon="arrow-left"左箭头图标 -->
       <!-- @click="isOneLevel=true"控制显示与隐藏 -->
+      <!-- @click="articleReport(item.value)" 把要举报的类型传递进去类型就是itme.value -->
       <van-cell icon="arrow-left" @click="isOneLevel=true" />
       <van-cell
             v-for="item in reportsList"
@@ -39,6 +41,8 @@
 <script>
 // 导入api模块文章不敢兴趣的函数
 import { apiArticleDislike } from "@/api/article";
+//导入举报api
+import { apiArticleReport } from "@/api/article";
 export default {
   name: "com-moreaction",
   props: {
@@ -83,11 +87,28 @@ export default {
       // 处理成功提示
       this.$toast.success('处理成功')
     },
-    //举报方法
-    articleReport(){
-
+   /**
+  * 对文章做举报处理
+  * type 举报类型
+  */
+async articleReport (type) {
+  try {
+   await apiArticleReport({ articleID: this.articleID, type: type })
+  } catch (err) {
+    this.$emit('input', false) // 关闭弹框
+    // err错误提示信息
+    // 重复举报的409提示处理
+    if (err.response.status === 409) {
+     return this.$toast.fail('文章已经被举报过')
+    } else {
+     return this.$toast.fail('举报失败')
     }
-    
+    return false
+  }
+  // 举报成功处理
+  this.$emit('input', false) // 关闭弹框
+  this.$toast.success('举报成功！')
+},
   }
 };
 </script>
