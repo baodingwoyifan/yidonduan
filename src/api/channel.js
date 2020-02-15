@@ -10,3 +10,11 @@ export function apiChannelList() {
         // method:'get'  //可以不设置，默认是get请求
     })
 }
+/**
+ * 获取所有频道数据
+ */
+export function apiChannelAll() {
+    return request({
+        url: '/app/v1_0/channels'
+    })
+}

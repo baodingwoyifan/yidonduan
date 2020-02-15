@@ -140,10 +140,9 @@ export default {
     // 下拉刷新载入
     async onRefresh() {
       await this.$sleep(1000); // 暂停1s
-
       // 获取文章信息
       let articles = await this.getArticleList();
-
+      // 判断数据是否存在
       if (articles.results.length) {
         // 把文章追加给articleList
         this.articleList.unshift(...articles.results);
