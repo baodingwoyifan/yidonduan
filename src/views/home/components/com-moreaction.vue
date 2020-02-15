@@ -24,21 +24,20 @@
       <!-- icon="arrow-left"左箭头图标 -->
       <!-- @click="isOneLevel=true"控制显示与隐藏 -->
       <van-cell icon="arrow-left" @click="isOneLevel=true" />
-      <van-cell title="其他问题" icon="location-o" />
-      <van-cell title="标题夸张" icon="location-o" />
-      <van-cell title="低俗色情" icon="location-o" />
-      <van-cell title="错别字多" icon="location-o" />
-      <van-cell title="旧闻重复" icon="location-o" />
-      <van-cell title="广告软文" icon="location-o" />
-      <van-cell title="内容不实" icon="location-o" />
-      <van-cell title="涉嫌违法犯罪" icon="location-o" />
-      <van-cell title="侵权" icon="location-o" />
+      <van-cell
+            v-for="item in reportsList"
+            :key="item.value"
+            :title="item.title"
+            icon="location-o"
+            @click="articleReport(item.value)"
+            />
+</van-cell-group>
     </van-cell-group>
   </van-dialog>
 </template>
 
 <script>
-// 导入api模块函数
+// 导入api模块文章不敢兴趣的函数
 import { apiArticleDislike } from "@/api/article";
 export default {
   name: "com-moreaction",
@@ -56,19 +55,37 @@ export default {
   },
   data() {
     return {
-      isOneLevel: true // 判断展示一级 或 二级 反垃圾内容 true:一级  false:二级
+      isOneLevel: true ,// 判断展示一级 或 二级 反垃圾内容 true:一级  false:二级
+      // 举报类型：
+      reportsList: [
+        { title: '其他问题', value: 0 },
+        { title: '标题夸张', value: 1 },
+        { title: '低俗色情', value: 2 },
+        { title: '错别字多', value: 3 },
+        { title: '旧闻重复', value: 4 },
+        { title: '广告软文', value: 5 },
+        { title: '内容不实', value: 6 },
+        { title: '涉嫌违法犯罪', value: 7 },
+        { title: '侵权', value: 8 }
+      ],
     };
   },
   methods: {
-    // 对不感兴趣文章做处理
+    // 对不感兴趣文章做处理，处理成功后，弹出框消失，文章消失
+    // dislikeSuccess是来自父组件的方法
     async articleDislike () {
+      // 下面方法调用api，正常情况下成功率是100%的，不用设置try和catch
       let result = await apiArticleDislike(this.articleID)
-      // 刷新文章列表
+      // 调用父组件给声明的方法dislikeSuccess删除目标文章
       this.$emit('dislikeSuccess')
-      // 关闭弹框
+      // 关闭弹框，控制父组件的showDialog的布尔值
       this.$emit('input', false)
-      // 成功提示
-      this.$toast.success('操作成功')
+      // 处理成功提示
+      this.$toast.success('处理成功')
+    },
+    //举报方法
+    articleReport(){
+
     }
     
   }

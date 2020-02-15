@@ -55,6 +55,7 @@
     </van-pull-refresh>
     <!--关闭-更多动作弹出框-->
     <!-- 组件传值的方法，用v-model控制组件的显示与隐藏 -->
+    <!-- @dislikeSuccess="handleDislikeSuccess"父组件设置事件方法，注意事件名称后边没有（），子组件可以调用父组件的方法 -->
     <more-action
       v-model="showDialog"
       :articleID="nowArticleID"
@@ -147,21 +148,20 @@ export default {
       // 把获得好的文章列表返回,给onLoad使用
       return result;
     },
-    // 展示对话框
-    displayDialog() {
-      // 点击之后使弹出框显示
-      this.showDialog = true;
-    },
     /**
      * 显示更多操作对话框
      * artID: 不喜欢文章id
      */
     displayDialog(artID) {
+      // 点击之后使弹出框显示
       this.showDialog = true;
       // 目标文章id
       this.nowArticleID = artID;
     },
-    //不感兴趣文章的后续成功处理
+    //不感兴趣文章的后续处理，从文章列表中把指定的文章删除，目标id就是nowArticleID，
+    //根据nowArticleID的数据从articleList中找出所处的下标，findIndex获得指定数组元素的下标
+    //item => item.art_id.toString() === this.nowArticleID）找到与nowArticleID相同的数据的下标
+    //this.articleList.splice(index, 1);根据下标删除文章
     handleDislikeSuccess() {
       // 获取当前被处理文章在数组中下标
       let index = this.articleList.findIndex(
