@@ -3,6 +3,7 @@
   <div class="scroll-wrapper">
     <!-- v-model="isLoading" 设置下拉动画效果是否结束的 -->
     <!-- @refresh="onRefresh 鼠标左键下拉动作触发的事件-->
+    <!-- success-duration="1000" 下拉完成后，提示信息在页面的停留时间 -->
     <van-pull-refresh
       v-model="isLoading"
       @refresh="onRefresh"
@@ -19,7 +20,13 @@
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <!-- <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title" /> -->
         <!-- cell单元格组件 -->
-        <van-cell v-for="item in articleList" :key="item.art_id.toString()" :title="item.title">
+        <!-- @click="$router.push({name:'article',params:{aid:item.art_id}})"  页面跳转，使得单击文章，跳转到文章详情页面 -->
+        <van-cell
+          v-for="item in articleList"
+          :key="item.art_id.toString()"
+          :title="item.title"
+          @click="$router.push({name:'article',params:{aid:item.art_id.toString()}})"
+        >
           <!-- 通过作用域插槽，体现label的描述信息 -->
           <template slot="label">
             <!-- van-grid宫格组件一行中,通过列的方式设置单元格 -->
@@ -32,7 +39,13 @@
               -->
               <!-- cover.images进行图片信息展示 -->
               <!-- 这里的item2是为了区别上面的item -->
-              <van-grid-item v-for="(item2,k2) in item.cover.images" :key="k2">
+              <!-- 文章列表添加点击事件，跳转到文章详情页 -->
+              <!-- @click="$router.push({name:'article',params:{aid:item.art_id}})" 页面跳转，使得单击文章，跳转到文章详情页面  -->
+              <van-grid-item
+                v-for="(item2,k2) in item.cover.images"
+                :key="k2"
+                @click="$router.push({name:'article',params:{aid:item.art_id.toString()}})"
+              >
                 <!-- van-image 
                 可以设置宽 高，src图片路径名地址
                 -->
@@ -42,10 +55,11 @@
             <p>
               <!-- </van-icon>图标组件  name来设置显示图标的样式 -->
               <!-- @click="displayDialog(item.art_id.toString())"传递不感兴趣的文章id -->
+              <!-- .stop 阻止事件冒泡 -->
               <van-icon
                 name="close"
                 style="float:right;"
-                @click="displayDialog(item.art_id.toString())"
+                @click.stop="displayDialog(item.art_id.toString())"
               />
               <span>作者:{{item.aut_name}}</span>
               &nbsp;
@@ -144,7 +158,7 @@ export default {
       let articles = await this.getArticleList();
       // 判断数据是否存在
       if (articles.results.length) {
-        // 把文章追加给articleList
+        // 把文章前置追加给articleList
         this.articleList.unshift(...articles.results);
         this.downSuccessText = "加载最新文章成功";
         // 更新时间戳

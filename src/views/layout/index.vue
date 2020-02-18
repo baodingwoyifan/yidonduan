@@ -3,6 +3,7 @@
     <!-- 当路由地址（path === $route.path）不是`我的`才显示 -->
     <!-- fixed 属性，使导航栏固定在头部 -->
     <!-- @click-right 右侧文字单击事件 -->
+    <!-- @click-right="$router.push('/search')" 点击搜索后页面跳转到搜索页面 -->
     <van-nav-bar fixed title="黑马头条" right-text="搜索" @click-right="$router.push('/search')" />
     <div class="my-wrapper">
       <router-view></router-view>

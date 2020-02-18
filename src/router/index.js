@@ -21,43 +21,54 @@ const routes = [
     children: [
       {
         path: '/',
+        name:'home',
         component: Home // 二级路由 首页
       },
       {
         path: '/question',
+        name: 'question',
         component: Question // 二级路由 问答组件
       },
       {
         path: '/video',
+        name: 'video',
         component: Video // 二级路由 视频组件
       }, {
         path: '/user',
+        name: 'user',
         component: User // 二级路由 个人中心
       }
     ]
   },
   {
     path: '/user/profile',
+    name: 'profile',
     component: Profile // 编辑资料
   },
   {
     path: '/user/chat',
+    name: 'chat',
     component: Chat // 小智同学
   },
   {
     path: '/login',
+    name: 'login',
     component: Login // 登录组件
   },
   {
-    path: '/article',
+    path: '/article/:aid',
+    name: 'article',
     component: Article // 文章详情
   },
   {
     path: '/search',
+    name: 'search',
     component: Search // 搜索中心
   },
+  // ：q路由参数，是搜索的关键字
   {
-    path: '/search/result',
+    path: '/search/result/:q',//通过路由体现搜索关键字
+    name: 'result',
     component: SearchResult // 搜索结果
   }
 

@@ -16,7 +16,12 @@
     </van-tabs>
     <!-- 弹出层的组件 -->
     <!-- 传递控制弹出层的显示与隐藏，以及我的频道展示，当前激活选中的频道 -->
-    <com-channel v-model="showChannel" :channelList="channelList" :activeChannelIndex="activeChannelIndex"></com-channel>
+      <!-- :activeChannelIndex.sync="activeChannelIndex" 中的sync属性是表示允许子组件来修改activeChannelIndex -->
+    <com-channel
+      v-model="showChannel"
+      :channelList="channelList"
+      :activeChannelIndex.sync="activeChannelIndex"
+    ></com-channel>
   </div>
 </template>
 <script>
@@ -43,9 +48,11 @@ export default {
     ComChannel
   },
   created() {
+    //获得频道数据
     this.getChannelList();
   },
   methods: {
+     //获得频道数据方法
     async getChannelList() {
       const result = await apiChannelList();
       this.channelList = result.channels;

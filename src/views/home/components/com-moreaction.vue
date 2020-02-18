@@ -93,6 +93,7 @@ export default {
   */
 async articleReport (type) {
   try {
+    // 调用api方法（apiArticleReport）发送举报请求
    await apiArticleReport({ articleID: this.articleID, type: type })
   } catch (err) {
     this.$emit('input', false) // 关闭弹框
