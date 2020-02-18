@@ -1,6 +1,7 @@
 <template>
   <div class="container">
-    <van-nav-bar left-arrow @click-left="$router.back()" title="文章详情"></van-nav-bar>
+    <!--设置fixed属性，使得头部固定-->
+    <van-nav-bar fixed left-arrow @click-left="$router.back()" title="文章详情"></van-nav-bar>
 
     <div class="detail">
       <h3 class="title">{{article.title}}</h3>
@@ -17,7 +18,14 @@
           <p class="time">{{article.pubdate | formatTime}}</p>
         </div>
         <!-- is_followed 为true表示已关注该用户 false表示未关注 -->
-        <van-button round size="small" type="info">{{article.is_followed?'已关注':'+ 关注'}}</van-button>
+        <!-- :loading="followLoading" 提示按钮有加载效果 -->
+        <van-button
+          round
+          size="small"
+          @click="followMe()"
+          :loading="followLoading"
+          :type="article.is_followed?'default':'info'"
+        >{{article.is_followed?'取消关注':'+ 关注'}}</van-button>
       </div>
       <div class="content">
         <p v-html="article.content"></p>
@@ -39,21 +47,29 @@
           icon="delete"
         >不喜欢</van-button>
       </div>
+      <!-- 评论 -->
+      <com-comment></com-comment>
     </div>
   </div>
 </template>
 <script>
+// 关注相关api方法导入
+import { apiFollow, apiUnFollow } from "@/api/user.js";
 import { apiArticleDetail } from "@/api/article"; // 导入api方法
+// 引入评论组件
+import ComComment from "./components/com-comment.vue";
 export default {
   name: "article",
   data() {
     return {
+      followLoading: false, // 关注动作加载标志
       article: {} // 文章详情
     };
   },
+  components: { ComComment },
   computed: {
     // 简化aid路由参数获取
-    aid:function() {
+    aid: function() {
       return this.$route.params.aid;
     }
   },
@@ -66,11 +82,41 @@ export default {
     async getArticleById() {
       let rst = await apiArticleDetail(this.aid);
       this.article = rst;
+    },
+    // 关注 或 取消关注
+    async followMe() {
+      this.followLoading = true;
+
+      await this.$sleep(800); // 暂停一会
+
+      if (this.article.is_followed) {
+        // 取消关注
+        try {
+          await apiUnFollow(this.article.aut_id);
+        } catch (err) {
+          console.dir(err);
+        }
+        this.article.is_followed = false; // 同步更新状态
+      } else {
+        // 关注
+        await apiFollow(this.article.aut_id);
+        this.article.is_followed = true; // 同步更新状态
+      }
+      this.followLoading = false;
+    },
+    // 获得文章
+    async getArticleById() {
+      let rst = await apiArticleDetail(this.aid);
+      this.article = rst;
     }
   }
 };
 </script>
 <style scoped lang='less'>
+/*设置外边距，使得文章的标题显示出来*/
+.detail {
+  margin-top:92px;
+  }
 .container {
   height: 100%;
   overflow-y: auto;
