@@ -47,7 +47,7 @@
           icon="delete"
         >不喜欢</van-button>
       </div>
-      <!-- 评论 -->
+      <!-- 评论组件-->
       <com-comment></com-comment>
     </div>
   </div>
@@ -59,14 +59,16 @@ import { apiArticleDetail } from "@/api/article"; // 导入api方法
 // 引入评论组件
 import ComComment from "./components/com-comment.vue";
 export default {
-  name: "article",
+  name: "Article",
   data() {
     return {
       followLoading: false, // 关注动作加载标志
       article: {} // 文章详情
     };
   },
-  components: { ComComment },
+  components: {
+    ComComment, //简易成员赋值
+  },
   computed: {
     // 简化aid路由参数获取
     aid: function() {
@@ -75,7 +77,7 @@ export default {
   },
   created() {
     // 调用
-    this.getArticleById();
+    this.getArticleById()
   },
   methods: {
     // 获得文章

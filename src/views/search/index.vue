@@ -1,10 +1,17 @@
 <template>
   <div class="container">
+    <!-- NavBar 导航栏组件 -->
+    <!-- title  	自定义标题 -->
+    <!-- fixed 是否固定在顶部 -->
+    <!-- left-arrow  是否显示左侧箭头-->
+    <!-- @click-left=""	点击左侧按钮时触发 -->
     <van-nav-bar title="搜索中心" left-arrow @click-left="$router.back()" />
     <!--绑定clear事件-->
     <!-- van-search 搜索组件 -->
-    <!-- v-model="searchText"设置表单域的关键内容 -->
+    <!-- v-model=""可以获取搜索组件中的内容信息 -->
     <!-- placeholder="请输入搜索关键词"   页面提示信息 -->
+    <!-- @clear="onClear" 点击清除按钮后触发 一般是清除搜索框内容的-->
+    <!-- @search="onSearch(searchText)" 确定搜索时触发 根据关键字发送请求，获取数据，onSearch方法有编程式导航的封装，会进行页面跳转-->
     <!-- @search="onSearch(searchText)" 点击之后根据检索的结果，跳转到搜索结果页面 @search是vant官网提供的事件，把关键字作为参数传递进来-->
     <van-search
       v-model="searchText"
@@ -141,6 +148,7 @@ export default {
       //  rst[0]-----就是匹配到的关键字
       // 不能匹配的话：
       // rst=null
+      // .match获取到匹配内容，而.text返回的是布尔值
       let rst = item.match(reg);
       // 对关键字进行高亮处理
       // 替换内容：reg就是原来的关键字，`<span style="color:red">${rst[0]}</span>`是es6语法，是一个家里css样式
@@ -176,21 +184,21 @@ export default {
     //     }
     //   });
     // },
-    // 根据关键字检索文章
+    // 根据关键字检索文章，获取数据，keywords就是传递进来的searchText（）搜索关键字
     onSearch(keywords) {
-      // 对联想的关键字做清除左右空格处理
+      // 对联想的关键字做清除左右空格处理，  .trim方法可以清除两边的空格
       keywords = keywords.trim();
-
-      // 没有联想内容，停止后续处理
+      //如果没有关键字传递进来，那后面的代码也就没有了意义，要停止代码执行
       if (!keywords) {
+        //停止代码执行
         return false;
       }
-
-      let data = new Set(this.sugguestHistories); // 根据已有的历史记录创建Set对象
-      data.add(keywords); // 存储访问的关键字
-      this.sugguestHistories = Array.from(data); // 把添加好的整体历史记录变为Array数组
+      // 根据已有的历史记录创建Set对象，  .Set()方法跟数组差不多，但是Array数组可以同时存在两个甚至多个相同的数据,而Set方法返回的也是一个新的数组，但是他没有重复成员
+      let data = new Set(this.sugguestHistories);
+      data.add(keywords); // 调用.add方法存储访问的关键字（关键字就是keywords）
+      this.sugguestHistories = Array.from(data); // 调用.from方法把添加好的整体历史记录变为Array数组
       // 把联想关键字数组存储给localStorage里边(名称为sugguest-histories)
-      window.localStorage.setItem(SH, JSON.stringify(this.sugguestHistories));
+      localStorage.setItem(SH, JSON.stringify(this.sugguestHistories));
 
       // 路由编程式导航，进入搜索文章展示页面
       this.$router.push({ name: "result", params: { q: keywords } });
