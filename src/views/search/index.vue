@@ -92,6 +92,10 @@ export default {
       // 每次执行时，就清除之前的定时器，以保证定时器不会重复累加 或 立即执行
       //清除定时器
       clearTimeout(this.timer);
+      if (!newV) {
+        this.sugguestionList = [];
+        return false;
+      }
       // 设置定时器
       // timer 是data成员，是临时的成员，不用在data中声明
       this.timer = setTimeout(async () => {
@@ -154,7 +158,11 @@ export default {
       // 替换内容：reg就是原来的关键字，`<span style="color:red">${rst[0]}</span>`是es6语法，是一个家里css样式
       // 的span标签，里面的内容就是（res【0】）就是高亮显示的关键字
       // replace（替换内容，被替换内容）replace是一个js的标准方法
-      return item.replace(reg, `<span style="color:red">${rst[0]}</span>`);
+      try {
+        return item.replace(reg, `<span style="color:red">${rst[0]}</span>`);
+      } catch (err) {
+        return item;
+      }
     },
     // 根据关键字跳转到搜索结果页面
     // onSearch(keywords) {

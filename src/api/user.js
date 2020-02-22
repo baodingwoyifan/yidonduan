@@ -44,3 +44,42 @@ export function apiUnFollow(target) {
     url: `/app/v1_0/user/followings/${target}`
   })
 }
+
+/**获取用户自己的信息 */
+export const apiUserInfo= () => {
+  return request({
+    // methhod默认是get，可以省略
+    url:`/app/v1_0/user`,
+    method:'GET'
+  })
+}
+/**
+ * 获取用户个人资料
+ */
+export function apiUserProfile() {
+  return request({
+    url: '/app/v1_0/user/profile', // 地址
+    method: 'get'
+  })
+}
+
+/**编辑用户头像api */
+export function apiUserPhoto(FromdataObj){
+  return request({
+    url:'/app/v1_0/user/photo',
+    method:'PATCH',
+    data: FromdataObj
+  })
+}
+/**编辑用户资料 */
+export function apiSaveProfile({ name, gender, birthday}){
+  return request({
+    url:'/app/v1_0/user/profile',
+    method:'PATCH',
+    data:{
+      name,
+      gender,
+      birthday
+    }
+  })
+}

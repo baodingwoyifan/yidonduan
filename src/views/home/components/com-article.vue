@@ -1,6 +1,7 @@
 <template>
   <!-- 文章列表展示区域 -->
-  <div class="scroll-wrapper">
+  <!-- 设置scrool事件 记录滚动条位置 -->
+  <div class="scroll-wrapper" @scroll="remember()" ref="myarticle">
     <!-- v-model="isLoading" 设置下拉动画效果是否结束的 -->
     <!-- @refresh="onRefresh 鼠标左键下拉动作触发的事件-->
     <!-- success-duration="1000" 下拉完成后，提示信息在页面的停留时间 -->
@@ -99,6 +100,7 @@ export default {
   },
   data() {
     return {
+      qiantop: 0, //记录滚动条位置
       // 下拉刷新
       isLoading: false, //下拉动画是否显示的开关
       list: [], //接受加载好的数据的
@@ -116,6 +118,11 @@ export default {
   components: {
     // 注册弹出框组件
     MoreAction
+  },
+  activated() {
+    if(this.qiantop){
+      this.$refs.myarticle.scrollTop=this.qiantop
+    }
   },
   // created() {
   //   this.getArticleList();
@@ -198,6 +205,9 @@ export default {
       );
       // 在总的文章中把当前文章清除掉
       this.articleList.splice(index, 1);
+    },
+    remember() {
+      this.qiantop = this.$refs.myarticle.scrollTop;
     }
   }
 };

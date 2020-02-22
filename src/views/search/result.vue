@@ -12,7 +12,7 @@
     <!-- finished 是否已加载完成，加载完成后不再触发load事件  默认值为false（这里绑定的是data成员，需要设置属性绑定） -->
     <!-- finished-text="没有更多了"  加载完成后的提示文案 -->
     <!-- @load事件    onLoad事件是固定的，在官网找到后，可以根据业务需求修改onLoad方法-->
-    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+    <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" >
       <!-- Cell 单元格组件 -->
       <!-- title  分组标题，标题内容是根据searchList来的，需要设置属性绑定 -->
       <van-cell v-for="item in searchList" :key="item.art_id.toString()" :title="item.title" />

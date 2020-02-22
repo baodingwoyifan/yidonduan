@@ -6,7 +6,10 @@
     <!-- @click-right="$router.push('/search')" 点击搜索后页面跳转到搜索页面 -->
     <van-nav-bar fixed title="黑马头条" right-text="搜索" @click-right="$router.push('/search')" />
     <div class="my-wrapper">
+      <!-- 设置缓存 二级路由（在这里配置缓存非常合适） -->
+      <keep-alive>
       <router-view></router-view>
+      </keep-alive>
     </div>
     <!-- router开启路由模式 -->
     <!-- <van-tabbar 标签栏组件，默认在底部显示 -->
@@ -16,13 +19,20 @@
       <van-tabbar-item to="/" icon="home-o">首页</van-tabbar-item>
       <van-tabbar-item to="/question" icon="chat-o">问答</van-tabbar-item>
       <van-tabbar-item to="/video" icon="video-o">视频</van-tabbar-item>
-      <van-tabbar-item to="/user" icon="user-o">我的</van-tabbar-item>
+      <van-tabbar-item :to='userGo' icon="user-o"> {{$store.state.user.token?'我的':'未登录'}}</van-tabbar-item>
     </van-tabbar>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+computed: {
+  userGo:function(){
+   return this.$store.state.user.token?'/user':'/login'
+  }
+},
+
+}
 </script>
 
 <style scoped lang='less'>
